@@ -40,9 +40,21 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('/');
+            return redirect()->intended('/image');
         }
 
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
+    }
+    public function logout(Request $request)
+    {
+        // Log the user out
+        Auth::logout();
+
+        // Invalidate the session and regenerate the token to prevent session fixation attacks
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect to the home or login page
+        return redirect('/login')->with('success', 'You have been logged out successfully.');
     }
 }
